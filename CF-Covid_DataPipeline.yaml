@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:  
+  BackupS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "es-covidtweets-err" 
+
+  CovidESDomain:
+    Type: AWS::Elasticsearch::Domain
+    Properties:
+      DomainName: "covidtweets"
+      ElasticsearchClusterConfig:
+        DedicatedMasterEnabled: false
+        InstanceCount: 4
+        ZoneAwarenessEnabled: false
+        InstanceType: "t2.small.elasticsearch"
+      EBSOptions:
+        EBSEnabled: true
+        Iops: 0
+        VolumeSize: 35
+        VolumeType: "gp2"
+      ElasticsearchVersion: "7.7"
+      SnapshotOptions:
+        AutomatedSnapshotStartHour: "0"
+      DomainEndpointOptions:
+        EnforceHTTPS: true
+
+      AccessPolicies:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS: "*"
+            Action: "es:*"
+            Resource: !Sub "arn:aws:es:us-east-1:$(AWS::AccountId):domain/covidtweets/*"
+            Condition:
+              IpAddress:
+                aws:SourceIP: "*"
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: "true"
+
+
+  COVIDSTREAM:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties: 
+        DeliveryStreamName: "covid-stream"
+        DeliveryStreamType: "DirectPut"
+        ElasticsearchDestinationConfiguration: 
+            BufferingHints: 
+                IntervalInSeconds: 300
+                SizeInMBs: 5
+            DomainARN: !GetAtt CovidESDomain.Arn
+            IndexName: "covidtweets"
+            RoleARN: <Replace with RoleARN>
+            S3BackupMode: "FailedDocumentsOnly"
+            S3Configuration: 
+                BucketARN: !GetAtt BackupS3Bucket.Arn
+                BufferingHints: 
+                  IntervalInSeconds: 300
+                  SizeInMBs: 5
+                RoleARN: <Replace with RoleARN>
