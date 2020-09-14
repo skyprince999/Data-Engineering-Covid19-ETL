@@ -1,0 +1,47 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucketMultipartUploads",
+                "s3:AbortMultipartUpload",
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "logs:PutLogEvents"
+            ],
+            "Resource": [
+                "arn:aws:s3:::es-covidtweets-err",
+                "arn:aws:s3:::es-covidtweets-err/*",
+                "arn:aws:logs:us-east-1:XXXXXXXXXXXX:log-group:/aws/kinesisfirehose/covid-stream"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "es:*",
+            "Resource": [
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_all/_settings",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_cluster/stats",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/index-name*/_mapping/type-name",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_nodes",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_nodes/stats",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_nodes/*/stats",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/_stats",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/index-name*/_stats"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": "es:*",
+            "Resource": [
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets",
+                "arn:aws:es:us-east-1:XXXXXXXXXXXX:domain/covidtweets/*"
+            ]
+        }
+    ]
+}
