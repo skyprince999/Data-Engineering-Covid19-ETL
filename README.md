@@ -7,3 +7,4 @@
    2. Code for taking snapshot of ES index (python)
    3. Code for basic input/output for ES domain (python)
    4. CloudFormation template for setting up Data Ingestion pipeline (yaml)
+   5. Lambda function for processing the tweets (python)
